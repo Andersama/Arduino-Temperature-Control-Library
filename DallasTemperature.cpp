@@ -453,13 +453,12 @@ bool DallasTemperature::requestTemperaturesByAddress(const uint8_t* deviceAddres
 
 // Continue to check if the IC has responded with a temperature
 void DallasTemperature::blockTillConversionComplete(uint8_t bitResolution) {
-
+	unsigned long delms = millisToWaitForConversion(bitResolution);
 	if (checkForConversion && !parasite) {
 		unsigned long start = millis();
-		while (!isConversionComplete() && (millis() - start < MAX_CONVERSION_TIMEOUT ))
+		while (!isConversionComplete() && (millis() - start < delms ))
 			yield();
 	} else {
-		unsigned long delms = millisToWaitForConversion(bitResolution);
 		activateExternalPullup();
 		delay(delms);
 		deactivateExternalPullup();
